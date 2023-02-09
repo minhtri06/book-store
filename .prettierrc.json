@@ -1,0 +1,13 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 4,
+  "semi": false,
+  "singleQuote": false,
+  "printWidth": 90,
+  "overrides": [
+    {
+      "files": ["*.json", "*.html", "*.ejs", "*.hbs", "*.scss", "*.jsx", "*.yml"],
+      "options": { "tabWidth": 2 }
+    }
+  ]
+}
