@@ -12,14 +12,28 @@ const commonElements = {
     query: {
         limit: Joi.number().integer(),
         page: Joi.number().integer(),
+
         attributes: Joi.string()
             .regex(/^[a-zA-Z0-9,]{1,}$/)
-            .custom(customValidation.query.attributes),
+            .custom(customValidation.query.splitByCommas),
 
-        sortBy: (fields) =>
+        attributesExclude: Joi.string()
+            .regex(/^[a-zA-Z0-9,]{1,}$/)
+            .custom(customValidation.query.splitByCommas),
+
+        include: Joi.string()
+            .regex(/^[a-zA-Z0-9,]{1,}$/)
+            .custom(customValidation.query.splitByCommas),
+
+        sortBy: (allowedFields) =>
             Joi.string()
-                .regex(/^[a-zA-Z0-9,\-]{1,}$/)
-                .custom(customValidation.query.sortBy(fields)),
+                .regex(/^[a-zA-Z0-9,-]{1,}$/)
+                .custom(customValidation.query.sortBy(allowedFields)),
+
+        numericFilters: (allowedFields) =>
+            Joi.string()
+                .regex(/^[a-zA-Z0-9,<>=.]{1,}$/)
+                .custom(customValidation.query.numericFilters(allowedFields)),
     },
 }
 module.exports = commonElements

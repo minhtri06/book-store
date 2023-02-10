@@ -12,6 +12,7 @@ const envSchema = Joi.object({
             commonConstants.TEST
         )
         .required(),
+    DEFAULT_PAGE_LIMIT: Joi.number().integer().required(),
 
     JWT_SECRET_KEY: Joi.string().required(),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().required(),
@@ -51,6 +52,7 @@ const envConfig = {
     PORT: envVars.PORT,
     CLIENT_URL: envVars.CLIENT_URL,
     NODE_ENV: envVars.NODE_ENV,
+    DEFAULT_PAGE_LIMIT: envVars.DEFAULT_PAGE_LIMIT,
 
     jwt: {
         SECRET_KEY: envVars.JWT_SECRET_KEY,

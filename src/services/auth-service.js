@@ -1,8 +1,6 @@
-const jwt = require("jsonwebtoken")
 const createError = require("http-errors")
 const userService = require("./user-services")
 const tokenService = require("./token-service")
-const envConfig = require("../config/env-config")
 const { RefreshToken } = require("../models")
 const { ACCESS, REFRESH } = require("../utils").commonConstants
 

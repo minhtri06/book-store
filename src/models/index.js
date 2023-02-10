@@ -5,6 +5,8 @@ const sequelize = require("../config/sequelize")
 const db = {
     User: require("./user"),
     RefreshToken: require("./refresh-token"),
+    Category: require("./category"),
+    Book: require("./book"),
 }
 
 Object.keys(db).forEach((modelName) => {

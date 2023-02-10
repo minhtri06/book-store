@@ -26,7 +26,11 @@ const numericFilters = (fields) => (numericFilters, helpers) => {
             if (isNaN(value)) {
                 return helpers.message("value in numericFilters must be numeric")
             }
-            filterObj[field] = { [operatorMap[operator]]: Number(value) }
+            if (!filterObj[field]) {
+                filterObj[field] = { [operatorMap[operator]]: Number(value) }
+            } else {
+                filterObj[field][operatorMap[operator]] = Number(value)
+            }
         } else {
             return helpers.message(`field '${field}' is not allowed in numericFilters`)
         }
@@ -54,13 +58,16 @@ const sortBy = (fields) => (sortBy, helpers) => {
 }
 
 /**
- *
- * @param {string} attributes
+ * Split by commas
+ * @param {string} value
  * @param {Function} helpers
- * @returns {Function}
+ * @returns {string[]}
  */
-const attributes = (attributes, helpers) => {
-    return attributes.split(",")
+const splitByCommas = (value, helpers) => {
+    return value.split(",")
 }
-const customValidation = { query: { numericFilters, sortBy, attributes } }
+
+const customValidation = {
+    query: { numericFilters, sortBy, splitByCommas },
+}
 module.exports = customValidation
