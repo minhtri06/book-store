@@ -1,6 +1,7 @@
 const createError = require("http-errors")
 const { bookService } = require("../services")
 const { StatusCodes } = require("http-status-codes")
+const cloudinary = require("cloudinary").v2
 
 /** @type {import("express").RequestHandler} */
 const getBooks = async (req, res) => {
@@ -10,7 +11,18 @@ const getBooks = async (req, res) => {
 
 /** @type {import("express").RequestHandler} */
 const createBook = async (req, res) => {
-    await bookService.createBook(req.body)
+    if (!req.file) {
+        throw createError.InternalServerError("Upload image failed")
+    }
+    req.body.imageUrl = req.file.path
+
+    try {
+        await bookService.createBook(req.body)
+    } catch (error) {
+        cloudinary.uploader.destroy(req.file.filename)
+        throw error
+    }
+
     return res.status(StatusCodes.CREATED).json({ message: "Book created" })
 }
 

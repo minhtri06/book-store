@@ -29,7 +29,6 @@ const createBook = {
         title: Joi.string().required(),
         price: Joi.number().required(),
         available: Joi.number().integer().min(0).required(),
-        imageUrl: Joi.string(),
         description: Joi.string(),
         categoryId: Joi.number().integer().required(),
     }),
