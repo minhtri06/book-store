@@ -1,6 +1,7 @@
 const { Op } = require("sequelize")
 const createError = require("http-errors")
 const { ForeignKeyConstraintError } = require("sequelize")
+const cloudinary = require("cloudinary").v2
 
 const { Book, Category } = require("../models")
 const envConfig = require("../config/env-config")
@@ -80,7 +81,7 @@ const createBook = async (bookBody) => {
         return await Book.create(bookBody)
     } catch (error) {
         if (error instanceof ForeignKeyConstraintError) {
-            throw createError.BadRequest("Category id does not exist")
+            throw createError.BadRequest("Invalid association")
         }
         throw error
     }
@@ -89,12 +90,61 @@ const createBook = async (bookBody) => {
 /**
  *
  * @param {number} id
- * @returns {Promise<InstanceType<Book>}
+ * @returns {Promise<InstanceType<Book>>}
  */
 const getBookById = async (id) => {
     return Book.findByPk(id)
 }
 
-const bookService = { isBookTitleExist, getBooks, createBook, getBookById }
+/**
+ *
+ * @param {number} id
+ * @param {object} updateBody
+ * @param {string} [updateBody.title]
+ * @param {number} [updateBody.price]
+ * @param {number} [updateBody.available]
+ * @param {string} [updateBody.imageUrl]
+ * @param {string} [updateBody.description]
+ * @param {number} [updateBody.categoryId]
+ * @param {object} uploadedFile
+ * @returns {Promise}
+ */
+const updateBookById = async (id, updateBody, uploadedFile = null) => {
+    try {
+        const book = await Book.findByPk(id)
+        if (!book) {
+            throw createError.NotFound("Book not found")
+        }
+
+        if (updateBody.title) {
+            if (await isBookTitleExist(updateBody.title)) {
+                throw createError.BadRequest("Book's title already exists")
+            }
+        }
+        if (uploadedFile) {
+            updateBody.imageUrl = uploadedFile.path
+        }
+
+        await book.update(updateBody)
+
+        return book
+    } catch (error) {
+        if (uploadedFile) {
+            cloudinary.uploader.destroy(uploadedFile.filename)
+        }
+        if (error instanceof ForeignKeyConstraintError) {
+            throw createError.BadRequest("Invalid association")
+        }
+        throw error
+    }
+}
+
+const bookService = {
+    isBookTitleExist,
+    getBooks,
+    createBook,
+    getBookById,
+    updateBookById,
+}
 
 module.exports = bookService

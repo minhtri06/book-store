@@ -40,6 +40,19 @@ const getBookById = {
     }),
 }
 
-const bookValidators = { getBooks, createBook, getBookById }
+const updateBookById = {
+    [PARAMS]: Joi.object({
+        bookId: commonElements.book.id.required(),
+    }),
+    [BODY]: Joi.object({
+        title: commonElements.book.title,
+        price: commonElements.book.price,
+        available: commonElements.book.available,
+        description: commonElements.book.description,
+        categoryId: commonElements.book.categoryId,
+    }),
+}
+
+const bookValidators = { getBooks, createBook, getBookById, updateBookById }
 
 module.exports = bookValidators

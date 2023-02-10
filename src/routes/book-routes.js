@@ -19,5 +19,10 @@ router
 router
     .route("/:bookId")
     .get(validate(bookValidators.getBookById), bookController.getBookById)
+    .patch(
+        fileUploader.single("image"),
+        validate(bookValidators.updateBookById),
+        bookController.updateBookById
+    )
 
 module.exports = router
