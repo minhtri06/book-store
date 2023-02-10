@@ -41,6 +41,18 @@ const updateBookById = async (req, res) => {
     return res.json({ message: "Success", book })
 }
 
-const bookController = { getBooks, createBook, getBookById, updateBookById }
+/** @type {import("express").RequestHandler} */
+const deleteBookById = async (req, res) => {
+    await bookService.deleteBookById(req.params.bookId)
+    return res.json({ message: "Success" })
+}
+
+const bookController = {
+    getBooks,
+    createBook,
+    getBookById,
+    updateBookById,
+    deleteBookById,
+}
 
 module.exports = bookController

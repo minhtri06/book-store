@@ -53,6 +53,18 @@ const updateBookById = {
     }),
 }
 
-const bookValidators = { getBooks, createBook, getBookById, updateBookById }
+const deleteBookById = {
+    [PARAMS]: Joi.object({
+        bookId: commonElements.book.id.required(),
+    }),
+}
+
+const bookValidators = {
+    getBooks,
+    createBook,
+    getBookById,
+    updateBookById,
+    deleteBookById,
+}
 
 module.exports = bookValidators

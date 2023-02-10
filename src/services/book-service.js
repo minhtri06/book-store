@@ -1,18 +1,28 @@
-const { Op } = require("sequelize")
 const createError = require("http-errors")
-const { ForeignKeyConstraintError } = require("sequelize")
+const { ForeignKeyConstraintError, Op } = require("sequelize")
 const cloudinary = require("cloudinary").v2
 
 const { Book, Category } = require("../models")
 const envConfig = require("../config/env-config")
-
+const { getFileNameFromUrl } = require("../utils")
 /**
  * Check book title exists or not
  * @param {string} title
  * @returns {Promise<Boolean>}
  */
-const isBookTitleExist = async (title) => {
+const doesBookTitleExist = async (title) => {
     const book = await Book.findOne({ where: { title } })
+    return book !== null
+}
+
+/**
+ *
+ * @param {string} title
+ * @param {number} bookId
+ * @returns {Promise<Boolean>}
+ */
+const doesAnotherBookWithThisTitleExist = async (title, bookId) => {
+    const book = await Book.findOne({ where: { title, id: { [Op.ne]: bookId } } })
     return book !== null
 }
 
@@ -74,7 +84,7 @@ const getBooks = async ({
  */
 const createBook = async (bookBody) => {
     try {
-        if (await isBookTitleExist(bookBody.title)) {
+        if (await doesBookTitleExist(bookBody.title)) {
             throw createError.BadRequest("Book's title already exists")
         }
 
@@ -117,16 +127,20 @@ const updateBookById = async (id, updateBody, uploadedFile = null) => {
         }
 
         if (updateBody.title) {
-            if (await isBookTitleExist(updateBody.title)) {
+            if (await doesAnotherBookWithThisTitleExist(updateBody.title, id)) {
                 throw createError.BadRequest("Book's title already exists")
             }
         }
         if (uploadedFile) {
             updateBody.imageUrl = uploadedFile.path
         }
+        const imageFileName = getFileNameFromUrl(book.imageUrl)
 
         await book.update(updateBody)
 
+        if (uploadedFile) {
+            cloudinary.uploader.destroy(imageFileName)
+        }
         return book
     } catch (error) {
         if (uploadedFile) {
@@ -139,12 +153,24 @@ const updateBookById = async (id, updateBody, uploadedFile = null) => {
     }
 }
 
+const deleteBookById = async (id) => {
+    const book = await Book.findByPk(id)
+    if (!book) {
+        throw createError.NotFound("Book not found")
+    }
+    if (book.imageUrl) {
+        const fileName = book.imageUrl
+    }
+    book.destroy()
+}
+
 const bookService = {
-    isBookTitleExist,
+    doesBookTitleExist,
     getBooks,
     createBook,
     getBookById,
     updateBookById,
+    deleteBookById,
 }
 
 module.exports = bookService

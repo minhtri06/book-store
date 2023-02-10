@@ -24,5 +24,6 @@ router
         validate(bookValidators.updateBookById),
         bookController.updateBookById
     )
+    .delete(validate(bookValidators.deleteBookById), bookController.deleteBookById)
 
 module.exports = router
