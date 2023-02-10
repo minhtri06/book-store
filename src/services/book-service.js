@@ -134,12 +134,12 @@ const updateBookById = async (id, updateBody, uploadedFile = null) => {
         if (uploadedFile) {
             updateBody.imageUrl = uploadedFile.path
         }
-        const imageFileName = getFileNameFromUrl(book.imageUrl)
+        const oldImageFileName = getFileNameFromUrl(book.imageUrl)
 
         await book.update(updateBody)
 
         if (uploadedFile) {
-            cloudinary.uploader.destroy(imageFileName)
+            cloudinary.uploader.destroy(oldImageFileName)
         }
         return book
     } catch (error) {
@@ -158,10 +158,13 @@ const deleteBookById = async (id) => {
     if (!book) {
         throw createError.NotFound("Book not found")
     }
-    if (book.imageUrl) {
-        const fileName = book.imageUrl
-    }
-    book.destroy()
+
+    const imageUrl = book.imageUrl
+
+    await book.destroy()
+
+    const fileName = getFileNameFromUrl(imageUrl)
+    cloudinary.uploader.destroy(fileName)
 }
 
 const bookService = {
