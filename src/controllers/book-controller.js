@@ -6,7 +6,7 @@ const cloudinary = require("cloudinary").v2
 /** @type {import("express").RequestHandler} */
 const getBooks = async (req, res) => {
     const books = await bookService.getBooks(req.query)
-    return res.json({ books })
+    return res.json({ message: "Success", books })
 }
 
 /** @type {import("express").RequestHandler} */
@@ -26,6 +26,15 @@ const createBook = async (req, res) => {
     return res.status(StatusCodes.CREATED).json({ message: "Book created" })
 }
 
-const bookController = { getBooks, createBook }
+/** @type {import("express").RequestHandler} */
+const getBookById = async (req, res) => {
+    const book = await bookService.getBookById(req.params.bookId)
+    if (!book) {
+        throw createError.NotFound("Book not found")
+    }
+    return res.json({ message: "Success", book })
+}
+
+const bookController = { getBooks, createBook, getBookById }
 
 module.exports = bookController

@@ -34,6 +34,12 @@ const createBook = {
     }),
 }
 
-const bookValidators = { getBooks, createBook }
+const getBookById = {
+    [PARAMS]: Joi.object({
+        bookId: Joi.number().integer().required(),
+    }),
+}
+
+const bookValidators = { getBooks, createBook, getBookById }
 
 module.exports = bookValidators

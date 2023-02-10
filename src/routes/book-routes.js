@@ -16,8 +16,8 @@ router
         validate(bookValidators.createBook),
         bookController.createBook
     )
-router.post("/test", (req, res) => {
-    console.log(req.body)
-})
+router
+    .route("/:bookId")
+    .get(validate(bookValidators.getBookById), bookController.getBookById)
 
 module.exports = router

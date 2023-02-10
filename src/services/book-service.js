@@ -67,7 +67,7 @@ const getBooks = async ({
 }
 
 /**
- *
+ * Create book
  * @param {object} bookBody
  * @returns {Promise<InstanceType<Book>>}
  */
@@ -86,6 +86,15 @@ const createBook = async (bookBody) => {
     }
 }
 
-const bookService = { isBookTitleExist, getBooks, createBook }
+/**
+ *
+ * @param {number} id
+ * @returns {Promise<InstanceType<Book>}
+ */
+const getBookById = async (id) => {
+    return Book.findByPk(id)
+}
+
+const bookService = { isBookTitleExist, getBooks, createBook, getBookById }
 
 module.exports = bookService
