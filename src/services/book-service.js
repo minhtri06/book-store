@@ -51,6 +51,7 @@ const getBooks = async ({
     queryOptions.limit = limit || envConfig.DEFAULT_PAGE_LIMIT
     page = page || 1
     queryOptions.offset = (page - 1) * queryOptions.limit
+    console.log(queryOptions)
     return Book.findAll(queryOptions)
 }
 

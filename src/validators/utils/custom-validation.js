@@ -67,7 +67,30 @@ const splitByCommas = (value, helpers) => {
     return value.split(",")
 }
 
+/**
+ *
+ * @param {object} modelMapping
+ * @returns {[]}
+ */
+const queryInclude = (modelMapping) => (value, helpers) => {
+    const options = value.split(",")
+    const include = []
+    for (let option of options) {
+        let [model, ...attributes] = option.split(":")
+        if (!modelMapping[model]) {
+            continue
+        }
+        if (attributes.length) {
+            include.push({ model: modelMapping[model], attributes })
+        } else {
+            include.push(modelMapping[model])
+        }
+    }
+    console.log(include[0])
+    return include
+}
+
 const customValidation = {
-    query: { numericFilters, sortBy, splitByCommas },
+    query: { numericFilters, sortBy, splitByCommas, include: queryInclude },
 }
 module.exports = customValidation

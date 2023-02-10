@@ -1,13 +1,14 @@
 const Joi = require("joi")
 const customValidation = require("./utils/custom-validation")
 const commonElements = require("./utils/common-elements")
+const { Category } = require("../models")
 const { BODY, PARAMS, QUERY } = require("../utils").commonConstants
 
 const getBooks = {
     [QUERY]: Joi.object({
         title: Joi.string(),
         categoryId: Joi.number().integer(),
-        include: commonElements.query.include,
+        include: commonElements.query.include({ category: Category }),
         sortBy: commonElements.query.sortBy(["price", "available", "categoryId"]),
         attributes: commonElements.query.attributes,
         attributesExclude: commonElements.query.attributesExclude,

@@ -21,9 +21,10 @@ const commonElements = {
             .regex(/^[a-zA-Z0-9,]{1,}$/)
             .custom(customValidation.query.splitByCommas),
 
-        include: Joi.string()
-            .regex(/^[a-zA-Z0-9,]{1,}$/)
-            .custom(customValidation.query.splitByCommas),
+        include: (modelMapping) =>
+            Joi.string()
+                .regex(/^[a-zA-Z0-9,:]{1,}$/)
+                .custom(customValidation.query.include(modelMapping)),
 
         sortBy: (allowedFields) =>
             Joi.string()
