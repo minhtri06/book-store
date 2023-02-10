@@ -1,8 +1,9 @@
-const { GET_USERS, MANAGE_USERS } = require("../utils").commonConstants.rights
+const { GET_USERS, MANAGE_USERS, MANAGE_BOOKS } =
+    require("../utils").commonConstants.rights
 
 let roleInfo = {
     user: [],
-    admin: [GET_USERS, MANAGE_USERS],
+    admin: [GET_USERS, MANAGE_USERS, MANAGE_BOOKS],
 }
 
 const roles = Object.keys(roleInfo)

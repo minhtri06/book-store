@@ -9,7 +9,13 @@ const getBooks = {
         title: Joi.string(),
         categoryId: Joi.number().integer(),
         include: commonElements.query.include({ category: Category }),
-        sortBy: commonElements.query.sortBy(["price", "available", "categoryId"]),
+        sortBy: commonElements.query.sortBy([
+            "price",
+            "available",
+            "categoryId",
+            "createdAt",
+            "updatedAt",
+        ]),
         attributes: commonElements.query.attributes,
         attributesExclude: commonElements.query.attributesExclude,
         limit: commonElements.query.limit,
@@ -18,6 +24,17 @@ const getBooks = {
     }),
 }
 
-const bookValidators = { getBooks }
+const createBook = {
+    [BODY]: Joi.object({
+        title: Joi.string().required(),
+        price: Joi.number().required(),
+        available: Joi.number().integer().min(0).required(),
+        imageUrl: Joi.string(),
+        description: Joi.string(),
+        categoryId: Joi.number().integer().required(),
+    }),
+}
+
+const bookValidators = { getBooks, createBook }
 
 module.exports = bookValidators

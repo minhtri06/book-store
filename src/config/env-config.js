@@ -18,6 +18,10 @@ const envSchema = Joi.object({
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().required(),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().required(),
 
+    CLOUDINARY_NAME: Joi.string().required(),
+    CLOUDINARY_API_KEY: Joi.string().required(),
+    CLOUDINARY_API_SECRET: Joi.string().required(),
+
     GOOGLE_AUTH_CLIENT_ID: Joi.string().required(),
     GOOGLE_AUTH_CLIENT_SECRET: Joi.string().required(),
 
@@ -58,6 +62,12 @@ const envConfig = {
         SECRET_KEY: envVars.JWT_SECRET_KEY,
         ACCESS_EXPIRATION_MINUTES: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
         REFRESH_EXPIRATION_DAYS: envVars.JWT_REFRESH_EXPIRATION_DAYS,
+    },
+
+    cloudinary: {
+        NAME: envVars.CLOUDINARY_NAME,
+        API_KEY: envVars.CLOUDINARY_API_KEY,
+        API_SECRET: envVars.CLOUDINARY_API_SECRET,
     },
 
     googleAuth: {

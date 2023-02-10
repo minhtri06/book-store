@@ -1,7 +1,19 @@
 const { Op } = require("sequelize")
+const createError = require("http-errors")
+const { ForeignKeyConstraintError } = require("sequelize")
 
 const { Book, Category } = require("../models")
 const envConfig = require("../config/env-config")
+
+/**
+ * Check book title exists or not
+ * @param {string} title
+ * @returns {Promise<Boolean>}
+ */
+const isBookTitleExist = async (title) => {
+    const book = await Book.findOne({ where: { title } })
+    return book !== null
+}
 
 /**
  * Get books by query option
@@ -51,10 +63,29 @@ const getBooks = async ({
     queryOptions.limit = limit || envConfig.DEFAULT_PAGE_LIMIT
     page = page || 1
     queryOptions.offset = (page - 1) * queryOptions.limit
-    console.log(queryOptions)
     return Book.findAll(queryOptions)
 }
 
-const bookService = { getBooks }
+/**
+ *
+ * @param {object} bookBody
+ * @returns {Promise<InstanceType<Book>>}
+ */
+const createBook = async (bookBody) => {
+    try {
+        if (await isBookTitleExist(bookBody.title)) {
+            throw createError.BadRequest("Book's title already exists")
+        }
+
+        return await Book.create(bookBody)
+    } catch (error) {
+        if (error instanceof ForeignKeyConstraintError) {
+            throw createError.BadRequest("Category id does not exist")
+        }
+        throw error
+    }
+}
+
+const bookService = { isBookTitleExist, getBooks, createBook }
 
 module.exports = bookService

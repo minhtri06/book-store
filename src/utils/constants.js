@@ -12,5 +12,6 @@ module.exports = {
     rights: {
         GET_USERS: "getUsers",
         MANAGE_USERS: "manageUsers",
+        MANAGE_BOOKS: "manageBooks",
     },
 }
