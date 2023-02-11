@@ -16,12 +16,7 @@ const createBook = async (req, res) => {
     }
     req.body.imageUrl = req.file.path
 
-    try {
-        await bookService.createBook(req.body)
-    } catch (error) {
-        cloudinary.uploader.destroy(req.file.filename)
-        throw error
-    }
+    await bookService.createBook(req.body, req.file)
 
     return res.status(StatusCodes.CREATED).json({ message: "Book created" })
 }

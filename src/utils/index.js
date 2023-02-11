@@ -1,6 +1,6 @@
 module.exports = {
     commonConstants: require("./constants"),
     pick: require("./pick"),
-    getFileNameFromUrl: require("./getFileNameFromUrl"),
+    getFilenameFromUrl: require("./getFilenameFromUrl"),
     ...require("./others"),
 }

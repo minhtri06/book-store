@@ -3,7 +3,7 @@ const { ForeignKeyConstraintError, Op } = require("sequelize")
 
 const { Book, Category } = require("../models")
 const envConfig = require("../config/env-config")
-const { getFileNameFromUrl, deleteCloudFile } = require("../utils")
+const { getFilenameFromUrl, deleteCloudFile } = require("../utils")
 
 /**
  * Check book title exists or not
@@ -94,7 +94,7 @@ const createBook = async (bookBody, imageFile = null) => {
         await Book.create(bookBody)
     } catch (error) {
         if (imageFile) {
-            deleteCloudFile(imageFile.fileName)
+            deleteCloudFile(imageFile.filename)
         }
         if (error instanceof ForeignKeyConstraintError) {
             throw createError.BadRequest("Invalid association")
@@ -137,16 +137,16 @@ const updateBookById = async (id, updateBody, newImageFile = null) => {
                 throw createError.BadRequest("Book's title already exists")
             }
         }
-        let oldImageFileName
+        let oldImageFilename
         if (newImageFile) {
-            oldImageFileName = getFileNameFromUrl(book.imageUrl)
+            oldImageFilename = getFilenameFromUrl(book.imageUrl)
             updateBody.imageUrl = newImageFile.path
         }
 
         await book.update(updateBody)
 
         if (newImageFile) {
-            deleteCloudFile(oldImageFileName)
+            deleteCloudFile(oldImageFilename)
         }
         return book
     } catch (error) {
@@ -167,8 +167,8 @@ const deleteBookById = async (id) => {
     }
     const imageUrl = book.imageUrl
     await book.destroy()
-    const fileName = getFileNameFromUrl(imageUrl)
-    deleteCloudFile(fileName)
+    const filename = getFilenameFromUrl(imageUrl)
+    deleteCloudFile(filename)
 }
 
 const bookService = {
