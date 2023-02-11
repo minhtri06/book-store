@@ -82,11 +82,23 @@ const updateCategoryById = async (id, updateBody) => {
     category.update(updateBody)
 }
 
+const deleteCategoryById = async (id) => {
+    const category = await Category.findByPk(id, { include: [Book], limit: 1 })
+    if (!category) {
+        throw createError.NotFound("Category not found")
+    }
+    if (category.Books?.length) {
+        throw createError.BadRequest("Cannot delete category because it have books")
+    }
+    category.destroy()
+}
+
 const categoryService = {
     getCategories,
     createCategory,
     getCategoryById,
     updateCategoryById,
+    deleteCategoryById,
 }
 
 module.exports = categoryService

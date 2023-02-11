@@ -24,11 +24,16 @@ const updateCategory = {
     [BODY]: Joi.object({ name: commonElements.category.name }),
 }
 
+const deleteCategory = {
+    [PARAMS]: Joi.object({ categoryId: commonElements.category.id.required() }),
+}
+
 const categoryValidator = {
     getCategories,
     createCategory,
     getCategoryById,
     updateCategory,
+    deleteCategory,
 }
 
 module.exports = categoryValidator

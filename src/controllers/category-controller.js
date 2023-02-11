@@ -33,11 +33,18 @@ const updateCategory = async (req, res) => {
     return res.json({ message: "Success" })
 }
 
+/** @type {import("express").RequestHandler} */
+const deleteCategory = async (req, res) => {
+    await categoryService.deleteCategoryById(req.params.categoryId)
+    return res.json({ message: "Success" })
+}
+
 const categoryController = {
     getCategories,
     createCategory,
     getCategoryById,
     updateCategory,
+    deleteCategory,
 }
 
 module.exports = categoryController
