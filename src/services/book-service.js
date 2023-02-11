@@ -1,10 +1,10 @@
 const createError = require("http-errors")
 const { ForeignKeyConstraintError, Op } = require("sequelize")
-const cloudinary = require("cloudinary").v2
 
 const { Book, Category } = require("../models")
 const envConfig = require("../config/env-config")
-const { getFileNameFromUrl } = require("../utils")
+const { getFileNameFromUrl, deleteCloudFile } = require("../utils")
+
 /**
  * Check book title exists or not
  * @param {string} title
@@ -82,14 +82,20 @@ const getBooks = async ({
  * @param {object} bookBody
  * @returns {Promise<InstanceType<Book>>}
  */
-const createBook = async (bookBody) => {
+const createBook = async (bookBody, imageFile = null) => {
     try {
         if (await doesBookTitleExist(bookBody.title)) {
             throw createError.BadRequest("Book's title already exists")
         }
+        if (imageFile) {
+            bookBody.imageUrl = imageFile.path
+        }
 
-        return await Book.create(bookBody)
+        await Book.create(bookBody)
     } catch (error) {
+        if (imageFile) {
+            deleteCloudFile(imageFile.fileName)
+        }
         if (error instanceof ForeignKeyConstraintError) {
             throw createError.BadRequest("Invalid association")
         }
@@ -116,10 +122,10 @@ const getBookById = async (id) => {
  * @param {string} [updateBody.imageUrl]
  * @param {string} [updateBody.description]
  * @param {number} [updateBody.categoryId]
- * @param {object} uploadedFile
+ * @param {object} newImageFile
  * @returns {Promise}
  */
-const updateBookById = async (id, updateBody, uploadedFile = null) => {
+const updateBookById = async (id, updateBody, newImageFile = null) => {
     try {
         const book = await Book.findByPk(id)
         if (!book) {
@@ -131,20 +137,21 @@ const updateBookById = async (id, updateBody, uploadedFile = null) => {
                 throw createError.BadRequest("Book's title already exists")
             }
         }
-        if (uploadedFile) {
-            updateBody.imageUrl = uploadedFile.path
+        let oldImageFileName
+        if (newImageFile) {
+            oldImageFileName = getFileNameFromUrl(book.imageUrl)
+            updateBody.imageUrl = newImageFile.path
         }
-        const oldImageFileName = getFileNameFromUrl(book.imageUrl)
 
         await book.update(updateBody)
 
-        if (uploadedFile) {
-            cloudinary.uploader.destroy(oldImageFileName)
+        if (newImageFile) {
+            deleteCloudFile(oldImageFileName)
         }
         return book
     } catch (error) {
-        if (uploadedFile) {
-            cloudinary.uploader.destroy(uploadedFile.filename)
+        if (newImageFile) {
+            deleteCloudFile(newImageFile.filename)
         }
         if (error instanceof ForeignKeyConstraintError) {
             throw createError.BadRequest("Invalid association")
@@ -158,13 +165,10 @@ const deleteBookById = async (id) => {
     if (!book) {
         throw createError.NotFound("Book not found")
     }
-
     const imageUrl = book.imageUrl
-
     await book.destroy()
-
     const fileName = getFileNameFromUrl(imageUrl)
-    cloudinary.uploader.destroy(fileName)
+    deleteCloudFile(fileName)
 }
 
 const bookService = {
