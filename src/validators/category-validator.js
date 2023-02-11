@@ -10,6 +10,25 @@ const getCategories = {
     }),
 }
 
-const categoryValidator = { getCategories }
+const createCategory = {
+    [BODY]: Joi.object({
+        name: commonElements.category.name.required(),
+    }),
+}
+
+const getCategoryById = {
+    [PARAMS]: Joi.object({
+        categoryId: commonElements.category.id.required(),
+    }),
+    [QUERY]: Joi.object({
+        include: commonElements.query.include({ books: Book }),
+    }),
+}
+
+const categoryValidator = {
+    getCategories,
+    createCategory,
+    getCategoryById,
+}
 
 module.exports = categoryValidator

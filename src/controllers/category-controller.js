@@ -9,6 +9,28 @@ const getCategories = async (req, res) => {
     return res.json({ message: "Success", categories })
 }
 
-const categoryController = { getCategories }
+/** @type {import("express").RequestHandler} */
+const createCategory = async (req, res) => {
+    const category = await categoryService.createCategory(req.body)
+    return res.status(StatusCodes.CREATED).json({ message: "Success", category })
+}
+
+/** @type {import("express").RequestHandler} */
+const getCategoryById = async (req, res) => {
+    const category = await categoryService.getCategoryById(
+        req.params.categoryId,
+        req.query
+    )
+    if (!category) {
+        throw createError.NotFound("Category not found")
+    }
+    return res.json({ message: "Success", category })
+}
+
+const categoryController = {
+    getCategories,
+    createCategory,
+    getCategoryById,
+}
 
 module.exports = categoryController

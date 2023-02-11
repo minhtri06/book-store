@@ -10,6 +10,7 @@ const commonElements = {
         avatar: Joi.string(),
     },
     category: {
+        id: Joi.number().integer(),
         name: Joi.string(),
     },
     book: {

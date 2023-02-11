@@ -6,6 +6,13 @@ class Category extends Model {
     static associate({ Book }) {
         this.hasMany(Book, { foreignKey: "categoryId" })
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            bookCount: this.Books ? this.Books.length : undefined,
+        }
+    }
 }
 
 Category.init(
