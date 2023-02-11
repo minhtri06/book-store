@@ -27,10 +27,17 @@ const getCategoryById = async (req, res) => {
     return res.json({ message: "Success", category })
 }
 
+/** @type {import("express").RequestHandler} */
+const updateCategory = async (req, res) => {
+    await categoryService.updateCategoryById(req.params.categoryId, req.body)
+    return res.json({ message: "Success" })
+}
+
 const categoryController = {
     getCategories,
     createCategory,
     getCategoryById,
+    updateCategory,
 }
 
 module.exports = categoryController

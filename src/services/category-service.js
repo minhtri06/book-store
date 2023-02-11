@@ -17,6 +17,18 @@ const doesCategoryNameExist = async (name) => {
 
 /**
  *
+ * @param {string} name
+ * @returns {Promise<Boolean>}
+ */
+const doesAnotherCategoryWithThisNameExist = async (name, categoryId) => {
+    const category = await Category.findOne({
+        where: { name, id: { [Op.ne]: categoryId } },
+    })
+    return category !== null
+}
+
+/**
+ *
  * @param {object} options
  * @param {string} [options.name]
  * @param {[]} [options.include]
@@ -56,10 +68,25 @@ const getCategoryById = async (id, { include = undefined }) => {
     return Category.findByPk(id, { include })
 }
 
+const updateCategoryById = async (id, updateBody) => {
+    const category = await Category.findByPk(id)
+    if (!category) {
+        throw createError.NotFound("Category not found")
+    }
+    if (
+        updateBody.name &&
+        (await doesAnotherCategoryWithThisNameExist(updateBody.name, id))
+    ) {
+        throw createError.BadRequest("Category name already exists")
+    }
+    category.update(updateBody)
+}
+
 const categoryService = {
     getCategories,
     createCategory,
     getCategoryById,
+    updateCategoryById,
 }
 
 module.exports = categoryService

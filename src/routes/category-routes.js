@@ -13,5 +13,6 @@ router
 router
     .route("/:categoryId")
     .get(validate(validator.getCategoryById), controller.getCategoryById)
+    .patch(validate(validator.updateCategory), controller.updateCategory)
 
 module.exports = router
