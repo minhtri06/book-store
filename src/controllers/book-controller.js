@@ -1,7 +1,6 @@
 const createError = require("http-errors")
 const { bookService } = require("../services")
 const { StatusCodes } = require("http-status-codes")
-const cloudinary = require("cloudinary").v2
 
 /** @type {import("express").RequestHandler} */
 const getBooks = async (req, res) => {

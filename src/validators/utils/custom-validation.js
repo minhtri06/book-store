@@ -86,7 +86,6 @@ const queryInclude = (modelMapping) => (value, helpers) => {
             include.push(modelMapping[model])
         }
     }
-    console.log(include[0])
     return include
 }
 

@@ -9,6 +9,9 @@ const commonElements = {
         role: Joi.string().valid("user", "admin"),
         avatar: Joi.string(),
     },
+    category: {
+        name: Joi.string(),
+    },
     book: {
         id: Joi.number().integer(),
         title: Joi.string(),

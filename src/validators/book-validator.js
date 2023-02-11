@@ -1,5 +1,4 @@
 const Joi = require("joi")
-const customValidation = require("./utils/custom-validation")
 const commonElements = require("./utils/common-elements")
 const { Category } = require("../models")
 const { BODY, PARAMS, QUERY } = require("../utils").commonConstants
@@ -59,7 +58,7 @@ const deleteBookById = {
     }),
 }
 
-const bookValidators = {
+const bookValidator = {
     getBooks,
     createBook,
     getBookById,
@@ -67,4 +66,4 @@ const bookValidators = {
     deleteBookById,
 }
 
-module.exports = bookValidators
+module.exports = bookValidator

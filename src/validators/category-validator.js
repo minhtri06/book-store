@@ -5,9 +5,8 @@ const { BODY, PARAMS, QUERY } = require("../utils").commonConstants
 
 const getCategories = {
     [QUERY]: Joi.object({
+        name: commonElements.category.name,
         include: commonElements.query.include({ books: Book }),
-        limit: commonElements.query.limit,
-        page: commonElements.query.page,
     }),
 }
 
