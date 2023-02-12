@@ -1,30 +1,27 @@
 const router = require("express").Router()
-const { userController } = require("../controllers")
+
+const { userController: controller } = require("../controllers")
+const { userValidator: validator } = require("../validators")
 const validate = require("../middlewares/validate")
-const { userValidator } = require("../validators")
 const auth = require("../middlewares/auth")
 const { GET_USERS, MANAGE_USERS } = require("../utils").commonConstants.rights
 
 router
     .route("/")
-    .get(auth(GET_USERS), validate(userValidator.getUsers), userController.getUsers)
-    .post(
-        auth(MANAGE_USERS),
-        validate(userValidator.createUser),
-        userController.createUser
-    )
+    .get(auth(GET_USERS), validate(validator.getUsers), controller.getUsers)
+    .post(auth(MANAGE_USERS), validate(validator.createUser), controller.createUser)
 router
     .route("/:userId")
-    .get(auth(GET_USERS), validate(userValidator.getUserById), userController.getUserById)
+    .get(auth(GET_USERS), validate(validator.getUserById), controller.getUserById)
     .patch(
         auth(MANAGE_USERS),
-        validate(userValidator.updateUserById),
-        userController.updateUserById
+        validate(validator.updateUserById),
+        controller.updateUserById
     )
     .delete(
         auth(MANAGE_USERS),
-        validate(userValidator.deleteUserById),
-        userController.deleteUserById
+        validate(validator.deleteUserById),
+        controller.deleteUserById
     )
 
 module.exports = router
