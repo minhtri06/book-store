@@ -1,7 +1,7 @@
-const { Op } = require("sequelize")
+const { Op, ForeignKeyConstraintError, ValidationError } = require("sequelize")
 const createError = require("http-errors")
 const bcrypt = require("bcryptjs")
-const { User } = require("../models")
+const { User, BookLike, Book } = require("../models")
 const { deleteCloudFile, getFilenameFromUrl } = require("../utils")
 
 /**
@@ -209,6 +209,28 @@ const getUserByEmailAndPassword = async (email, password) => {
     return user
 }
 
+/**
+ *
+ * @param {number} userId
+ * @param {number} bookId
+ * @returns {Promise}
+ */
+const likeBook = async (userId, bookId) => {
+    try {
+        await BookLike.create({ userId, bookId })
+    } catch (error) {
+        if (
+            error instanceof ValidationError ||
+            error instanceof ForeignKeyConstraintError
+        ) {
+            throw createError.BadRequest("Bad request")
+        }
+        throw error
+    }
+    const book = await Book.findByPk(bookId)
+    book.increment("likeCount")
+}
+
 const userService = {
     hashPassword,
     verifyPassword,
@@ -223,6 +245,7 @@ const userService = {
     updateUserById,
     deleteUserById,
     getUserByEmailAndPassword,
+    likeBook,
 }
 
 module.exports = userService
