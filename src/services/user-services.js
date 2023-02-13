@@ -2,7 +2,7 @@ const { Op } = require("sequelize")
 const createError = require("http-errors")
 const bcrypt = require("bcryptjs")
 const { User } = require("../models")
-const roleConfig = require("../config/roles")
+const { deleteCloudFile, getFilenameFromUrl } = require("../utils")
 
 /**
  *
@@ -121,14 +121,25 @@ const checkEmailExist = async (email) => {
  * @param {string} [userBody.avatar]
  * @param {string} [userBody.role]
  */
-const createUser = async (userBody) => {
-    if (await checkEmailExist(userBody.email)) {
-        throw createError.BadRequest("Email has been used")
+const createUser = async (userBody, avatarFile = undefined) => {
+    try {
+        if (await checkEmailExist(userBody.email)) {
+            throw createError.BadRequest("Email has been used")
+        }
+        if (userBody.password) {
+            userBody.passwordHash = await hashPassword(userBody.password)
+        }
+        if (avatarFile) {
+            userBody.avatar = avatarFile.path
+        }
+        const user = await User.create(userBody)
+        return user
+    } catch (error) {
+        if (avatarFile) {
+            deleteCloudFile(avatarFile.filename)
+        }
+        throw error
     }
-    if (userBody.password) {
-        userBody.passwordHash = await hashPassword(userBody.password)
-    }
-    return User.create(userBody)
 }
 
 /**
@@ -142,22 +153,41 @@ const createUser = async (userBody) => {
  * @param {string} [updateBody.role]
  * @returns
  */
-const updateUserById = async (id, updateBody) => {
-    const user = await getUserById(id)
-    if (!user) {
-        throw createError.NotFound("User not found")
+const updateUserById = async (id, updateBody, newAvatarFile = undefined) => {
+    try {
+        const user = await getUserById(id)
+        if (!user) {
+            throw createError.NotFound("User not found")
+        }
+        if (
+            updateBody.email &&
+            user.email !== updateBody.email &&
+            (await checkEmailExist(updateBody.email))
+        ) {
+            throw createError.BadRequest("Email has been used")
+        }
+        if (updateBody.password) {
+            updateBody.passwordHash = await hashPassword(updateBody.password)
+        }
+        let oldAvatarFilename
+        if (newAvatarFile) {
+            oldAvatarFilename = getFilenameFromUrl(user.avatar)
+            updateBody.avatar = newAvatarFile.path
+        }
+
+        await user.update(updateBody)
+
+        if (newAvatarFile) {
+            deleteCloudFile(oldAvatarFilename)
+        }
+
+        return user
+    } catch (error) {
+        if (newAvatarFile) {
+            deleteCloudFile(newAvatarFile.filename)
+        }
+        throw error
     }
-    if (
-        updateBody.email &&
-        user.email !== updateBody.email &&
-        (await checkEmailExist(updateBody.email))
-    ) {
-        throw createError.BadRequest("Email has been used")
-    }
-    if (updateBody.password) {
-        updateBody.passwordHash = await hashPassword(updateBody.password)
-    }
-    return user.update(updateBody)
 }
 
 const deleteUserById = async (id) => {

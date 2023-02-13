@@ -25,8 +25,7 @@ const getUserById = async (req, res) => {
 
 /** @type {import("express").RequestHandler} */
 const updateUserById = async (req, res) => {
-    const user = await userService.updateUserById(req.params.userId, req.body)
-
+    const user = await userService.updateUserById(req.params.userId, req.body, req.file)
     return res.status(StatusCodes.OK).json({ message: "Success", user })
 }
 

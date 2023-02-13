@@ -9,9 +9,9 @@ const { ACCESS, REFRESH } = require("../utils").commonConstants
  * @param {object} userBody
  * @returns {Promise}
  */
-const register = async (userBody) => {
+const register = async (userBody, avatarFile = undefined) => {
     userBody.role = "user"
-    const user = await userService.createUser(userBody)
+    const user = await userService.createUser(userBody, avatarFile)
     const authTokens = await tokenService.createAuthTokens(user.id)
     return { user, authTokens }
 }

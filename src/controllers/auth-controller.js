@@ -3,7 +3,7 @@ const { StatusCodes } = require("http-status-codes")
 
 /** @type {import("express").RequestHandler} */
 const registerUser = async (req, res) => {
-    const { user, authTokens } = await authService.register(req.body)
+    const { user, authTokens } = await authService.register(req.body, req.file)
     return res.status(StatusCodes.CREATED).json({ user, authTokens })
 }
 

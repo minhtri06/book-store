@@ -1,5 +1,4 @@
 const Joi = require("joi")
-const customValidation = require("./utils/custom-validation")
 const commonElements = require("./utils/common-elements")
 const { BODY, PARAMS, QUERY } = require("../utils").commonConstants
 
@@ -34,7 +33,6 @@ const updateUserById = {
     [BODY]: Joi.object({
         name: Joi.string(),
         password: commonElements.user.password,
-        avatar: Joi.string(),
     }),
     [PARAMS]: Joi.object().keys({
         userId: Joi.number().integer().required(),
