@@ -28,6 +28,15 @@ const getCategoryById = async (req, res) => {
 }
 
 /** @type {import("express").RequestHandler} */
+const getBooksOfCategory = async (req, res) => {
+    const books = await categoryService.getBooksOfCategory(
+        req.params.categoryId,
+        req.query
+    )
+    return res.json({ message: "Success", books })
+}
+
+/** @type {import("express").RequestHandler} */
 const updateCategory = async (req, res) => {
     await categoryService.updateCategoryById(req.params.categoryId, req.body)
     return res.json({ message: "Success" })
@@ -43,6 +52,7 @@ const categoryController = {
     getCategories,
     createCategory,
     getCategoryById,
+    getBooksOfCategory,
     updateCategory,
     deleteCategory,
 }

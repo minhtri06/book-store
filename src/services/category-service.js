@@ -47,6 +47,24 @@ const getCategories = async ({ name, include }) => {
 
 /**
  *
+ * @param {number} id
+ * @param {[]} include
+ * @returns {Promise<InstanceType<Category>>}
+ */
+const getCategoryById = async (id, { include = undefined }) => {
+    return Category.findByPk(id, { include })
+}
+
+const getBooksOfCategory = async (categoryId, { sortBy }) => {
+    return Book.findAll({
+        where: { categoryId },
+        order: sortBy,
+        attributes: { exclude: ["description", "createdAt", "updatedAt"] },
+    })
+}
+
+/**
+ *
  * @param {object} categoryBody
  * @param {string} [categoryBody.name]
  * @returns {Promise<InstanceType<Category>>}
@@ -56,16 +74,6 @@ const createCategory = async (categoryBody) => {
         throw createError.BadRequest("Category's name already exists")
     }
     return Category.create(categoryBody)
-}
-
-/**
- *
- * @param {number} id
- * @param {[]} include
- * @returns {Promise<InstanceType<Category>>}
- */
-const getCategoryById = async (id, { include = undefined }) => {
-    return Category.findByPk(id, { include })
 }
 
 const updateCategoryById = async (id, updateBody) => {
@@ -95,8 +103,9 @@ const deleteCategoryById = async (id) => {
 
 const categoryService = {
     getCategories,
-    createCategory,
     getCategoryById,
+    getBooksOfCategory,
+    createCategory,
     updateCategoryById,
     deleteCategoryById,
 }

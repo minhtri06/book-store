@@ -20,12 +20,14 @@ const getCategoryById = {
     [PARAMS]: Joi.object({ categoryId: commonElements.category.id.required() }),
     [QUERY]: Joi.object({
         include: commonElements.query.include({
-            books: {
-                model: Book,
-                attributes: ["title", "price", "available"],
-            },
+            books: { model: Book, attributes: ["title", "price", "available"] },
         }),
     }),
+}
+
+const getBooksOfCategory = {
+    [PARAMS]: Joi.object({ categoryId: commonElements.category.id.required() }),
+    [QUERY]: Joi.object({ sortBy: commonElements.query.sortBy(["likeCount", "price"]) }),
 }
 
 const updateCategory = {
@@ -41,6 +43,7 @@ const categoryValidator = {
     getCategories,
     createCategory,
     getCategoryById,
+    getBooksOfCategory,
     updateCategory,
     deleteCategory,
 }

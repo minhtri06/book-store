@@ -6,24 +6,18 @@ const { BODY, PARAMS, QUERY } = require("../utils").commonConstants
 const getBooks = {
     [QUERY]: Joi.object({
         title: Joi.string(),
-        categoryId: Joi.number().integer(),
-        sortBy: commonElements.query.sortBy(["price", "available", "createdAt"]),
+        sortBy: commonElements.query.sortBy([
+            "price",
+            "available",
+            "createdAt",
+            "likeCount",
+        ]),
         include: commonElements.query.include({
             category: { model: Category, attributes: ["id", "name"] },
         }),
         limit: commonElements.query.limit,
         page: commonElements.query.page,
         numericFilters: commonElements.query.numericFilters(["price", "available"]),
-    }),
-}
-
-const createBook = {
-    [BODY]: Joi.object({
-        title: Joi.string().required(),
-        price: Joi.number().required(),
-        available: Joi.number().integer().min(0).required(),
-        description: Joi.string(),
-        categoryId: Joi.number().integer().required(),
     }),
 }
 
@@ -35,6 +29,16 @@ const getBookById = {
         include: commonElements.query.include({
             category: { model: Category, attributes: ["id", "name"] },
         }),
+    }),
+}
+
+const createBook = {
+    [BODY]: Joi.object({
+        title: Joi.string().required(),
+        price: Joi.number().required(),
+        available: Joi.number().integer().min(0).required(),
+        description: Joi.string(),
+        categoryId: Joi.number().integer().required(),
     }),
 }
 

@@ -7,7 +7,7 @@ const getUsers = {
     [QUERY]: Joi.object({
         name: Joi.string(),
         role: Joi.string(),
-        sortBy: commonElements.query.sortBy(["name"]),
+        sortBy: commonElements.query.sortBy(["name", "createdAt"]),
         limit: commonElements.query.limit,
         page: commonElements.query.page,
         attributes: commonElements.query.attributes,

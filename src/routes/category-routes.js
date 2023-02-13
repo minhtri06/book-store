@@ -15,5 +15,10 @@ router
     .get(validate(validator.getCategoryById), controller.getCategoryById)
     .patch(validate(validator.updateCategory), controller.updateCategory)
     .delete(validate(validator.deleteCategory), controller.deleteCategory)
+router.get(
+    "/:categoryId/books",
+    validate(validator.getBooksOfCategory),
+    controller.getBooksOfCategory
+)
 
 module.exports = router
