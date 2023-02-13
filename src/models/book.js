@@ -3,8 +3,13 @@ const { Model, DataTypes } = require("sequelize")
 const sequelize = require("../config/sequelize")
 
 class Book extends Model {
-    static associate({ Category }) {
+    static associate({ Category, User }) {
         this.belongsTo(Category, { foreignKey: "categoryId" })
+        this.belongsToMany(User, {
+            through: "BookLike",
+            foreignKey: "bookId",
+            as: "likedUsers",
+        })
     }
 }
 

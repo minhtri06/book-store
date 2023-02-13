@@ -3,9 +3,12 @@ const { Model, DataTypes } = require("sequelize")
 const sequelize = require("../config/sequelize")
 
 class User extends Model {
-    static associate({ RefreshToken }) {
-        this.hasMany(RefreshToken, {
+    static associate({ RefreshToken, Book }) {
+        this.hasMany(RefreshToken, { foreignKey: "userId" })
+        this.belongsToMany(Book, {
+            through: "BookLike",
             foreignKey: "userId",
+            as: "likedBooks",
         })
     }
 

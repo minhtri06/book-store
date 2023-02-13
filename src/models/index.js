@@ -7,6 +7,7 @@ const db = {
     RefreshToken: require("./refresh-token"),
     Category: require("./category"),
     Book: require("./book"),
+    BookLike: require("./book-like"),
 }
 
 Object.keys(db).forEach((modelName) => {
