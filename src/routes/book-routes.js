@@ -16,6 +16,7 @@ router
         validate(validator.createBook),
         controller.createBook
     )
+router.get("/top-like")
 router
     .route("/:bookId")
     .get(validate(validator.getBookById), controller.getBookById)
@@ -25,5 +26,6 @@ router
         controller.updateBookById
     )
     .delete(validate(validator.deleteBookById), controller.deleteBookById)
+router.get("/:bookId/category")
 
 module.exports = router

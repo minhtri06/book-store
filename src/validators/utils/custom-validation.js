@@ -73,18 +73,13 @@ const splitByCommas = (value, helpers) => {
  * @returns {[]}
  */
 const queryInclude = (modelMapping) => (value, helpers) => {
-    const options = value.split(",")
+    const models = value.split(",")
     const include = []
-    for (let option of options) {
-        let [model, ...attributes] = option.split(":")
+    for (let model of models) {
         if (!modelMapping[model]) {
-            continue
+            return helpers.message("Invalid include")
         }
-        if (attributes.length) {
-            include.push({ model: modelMapping[model], attributes })
-        } else {
-            include.push(modelMapping[model])
-        }
+        include.push(modelMapping[model])
     }
     return include
 }

@@ -1,7 +1,7 @@
 const createError = require("http-errors")
 const { ForeignKeyConstraintError, Op } = require("sequelize")
 
-const { Book, Category } = require("../models")
+const { Book, Category, User, BookLike } = require("../models")
 const envConfig = require("../config/env-config")
 const { getFilenameFromUrl, deleteCloudFile } = require("../utils")
 
@@ -33,8 +33,6 @@ const doesAnotherBookWithThisTitleExist = async (title, bookId) => {
  * @param {number} [options.categoryId]
  * @param {string[]} [options.include]
  * @param {[]} [options.sortBy]
- * @param {string[]} [options.attributes]
- * @param {string[]} [options.attributesExclude]
  * @param {number} [options.limit]
  * @param {number} [options.page]
  * @param {[]} [options.numericFilters]
@@ -45,12 +43,13 @@ const getBooks = async ({
     numericFilters,
     include,
     sortBy,
-    attributes,
-    attributesExclude,
     limit,
     page,
 }) => {
-    const queryOptions = { where: {} }
+    const queryOptions = {
+        where: {},
+        attributes: { exclude: ["description", "updatedAt", "createdAt"] },
+    }
     if (title) {
         queryOptions.where.title = { [Op.like]: `%${title}%` }
     }
@@ -65,11 +64,6 @@ const getBooks = async ({
     }
     if (sortBy) {
         queryOptions.order = sortBy
-    }
-    if (attributes) {
-        queryOptions.attributes = attributes
-    } else if (attributesExclude) {
-        queryOptions.attributes = { exclude: attributesExclude }
     }
     queryOptions.limit = limit || envConfig.DEFAULT_PAGE_LIMIT
     page = page || 1
@@ -108,8 +102,19 @@ const createBook = async (bookBody, imageFile = null) => {
  * @param {number} id
  * @returns {Promise<InstanceType<Book>>}
  */
-const getBookById = async (id) => {
-    return Book.findByPk(id)
+const getBookById = async (id, options = {}) => {
+    return Book.findByPk(id, options)
+}
+
+const getLikedBookOfUser = async (userId, options = {}) => {
+    console.log({
+        include: { model: User, where: { id: userId }, attributes: [] },
+        ...options,
+    })
+    return Book.findAll({
+        include: { model: User, where: { id: userId }, attributes: [] },
+        ...options,
+    })
 }
 
 /**
@@ -171,13 +176,26 @@ const deleteBookById = async (id) => {
     deleteCloudFile(filename)
 }
 
+const userLikeABook = async (userId, bookId) => {
+    try {
+        await BookLike.create({ userId, bookId })
+    } catch (error) {
+        if (error instanceof ForeignKeyConstraintError) {
+            throw createError.BadRequest("Invalid association")
+        }
+        throw error
+    }
+}
+
 const bookService = {
     doesBookTitleExist,
     getBooks,
+    getLikedBookOfUser,
     createBook,
     getBookById,
     updateBookById,
     deleteBookById,
+    userLikeABook,
 }
 
 module.exports = bookService

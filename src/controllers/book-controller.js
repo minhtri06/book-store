@@ -22,7 +22,7 @@ const createBook = async (req, res) => {
 
 /** @type {import("express").RequestHandler} */
 const getBookById = async (req, res) => {
-    const book = await bookService.getBookById(req.params.bookId)
+    const book = await bookService.getBookById(req.params.bookId, req.query)
     if (!book) {
         throw createError.NotFound("Book not found")
     }

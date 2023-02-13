@@ -15,6 +15,7 @@ Book.init(
         available: { type: DataTypes.INTEGER, allowNull: false },
         imageUrl: { type: DataTypes.STRING, defaultValue: "" },
         description: { type: DataTypes.TEXT, defaultValue: "" },
+        likeCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         categoryId: { type: DataTypes.INTEGER, allowNull: false },
     },
     {

@@ -7,16 +7,10 @@ const getBooks = {
     [QUERY]: Joi.object({
         title: Joi.string(),
         categoryId: Joi.number().integer(),
-        include: commonElements.query.include({ category: Category }),
-        sortBy: commonElements.query.sortBy([
-            "price",
-            "available",
-            "categoryId",
-            "createdAt",
-            "updatedAt",
-        ]),
-        attributes: commonElements.query.attributes,
-        attributesExclude: commonElements.query.attributesExclude,
+        sortBy: commonElements.query.sortBy(["price", "available", "createdAt"]),
+        include: commonElements.query.include({
+            category: { model: Category, attributes: ["id", "name"] },
+        }),
         limit: commonElements.query.limit,
         page: commonElements.query.page,
         numericFilters: commonElements.query.numericFilters(["price", "available"]),
@@ -36,6 +30,11 @@ const createBook = {
 const getBookById = {
     [PARAMS]: Joi.object({
         bookId: Joi.number().integer().required(),
+    }),
+    [QUERY]: Joi.object({
+        include: commonElements.query.include({
+            category: { model: Category, attributes: ["id", "name"] },
+        }),
     }),
 }
 
