@@ -3,4 +3,5 @@ module.exports = {
     authController: require("./auth-controller"),
     categoryController: require("./category-controller"),
     bookController: require("./book-controller"),
+    meController: require("./me-controller"),
 }
