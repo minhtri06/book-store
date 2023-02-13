@@ -195,7 +195,10 @@ const deleteUserById = async (id) => {
     if (!user) {
         throw createError.NotFound("User not found")
     }
-    return user.destroy()
+    const avatarFilename = getFilenameFromUrl(user.avatar)
+    await user.destroy()
+    deleteCloudFile(avatarFilename)
+    return user
 }
 
 const getUserByEmailAndPassword = async (email, password) => {
