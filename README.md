@@ -2,15 +2,25 @@
 
 ## About this project
 
-This project implements RESTful APIs using ExpressJS with some security features such at validation, authentication and authorization
+This project implements the basic functionalities of a book store.
 
-This project was inspired by this repository: https://github.com/hagopj13/node-express-boilerplate
+This project is referenced from this [repository](https://github.com/hagopj13/node-express-boilerplate)
 
-## Main technologies
+## Features
 
--   NodeJS: Environment (v18.12.1)
--   expressJS: The core of the server (v4.18.2)
--   Sequelize: Interact with SQL Server (v6.28.0)
--   Joi: Validation
--   passport: Verify authentication and authorization
--   helmet: Set security HTTP headers
+-   Register user
+-   Login with email/password, google login
+-   Check auth with jwt token, refresh token, blacklist suspicious tokens
+-   Update user profile
+-   Post a new book
+-   Update book
+-   Upload images
+-   Like a book
+-   Buy books
+
+## Technologies
+
+-   expressJS
+-   MySQL with Sequelize 
+-   Joi
+-   passport
