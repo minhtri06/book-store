@@ -1,32 +1,44 @@
 "use strict"
 const { Model, DataTypes } = require("sequelize")
-const sequelize = require("../config/sequelize")
+
+const sequelize = require("../configs/sequelize")
 
 class Book extends Model {
-    static associate({ Category, User }) {
-        this.belongsTo(Category, { foreignKey: "categoryId" })
-        this.belongsToMany(User, {
-            through: "BookLike",
-            foreignKey: "bookId",
-            as: "likedUsers",
-        })
+    static associate({ Author, Category, Invoice, InvoiceItem }) {
+        this.belongsTo(Author, { foreignKey: "authorId" })
+        this.belongsTo(Category, { foreignKey: "categoryId", onDelete: "SET NULL" })
+        this.belongsToMany(Invoice, { through: InvoiceItem, foreignKey: "bookId" })
+        this.hasMany(InvoiceItem, { foreignKey: "bookId" })
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            createdAt: undefined,
+            updatedAt: undefined,
+        }
     }
 }
 
 Book.init(
     {
-        title: { type: DataTypes.STRING, allowNull: false },
-        price: { type: DataTypes.FLOAT, allowNull: false },
-        available: { type: DataTypes.INTEGER, allowNull: false },
-        imageUrl: { type: DataTypes.STRING, defaultValue: "" },
-        description: { type: DataTypes.TEXT, defaultValue: "" },
-        likeCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        categoryId: { type: DataTypes.INTEGER, allowNull: false },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            set(value) {
+                this.setDataValue("title", value.toUpperCase())
+            },
+        },
+        image: { type: DataTypes.STRING },
+        authorId: { type: DataTypes.INTEGER },
+        authorName: { type: DataTypes.STRING },
+        categoryId: { type: DataTypes.INTEGER },
+        categoryName: { type: DataTypes.STRING },
+        count: { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },
+        price: { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },
     },
-    {
-        sequelize,
-        modelName: "Book",
-    }
+    { sequelize, modelName: "Book", hasTrigger: true },
 )
 
 module.exports = Book

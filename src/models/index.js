@@ -1,13 +1,15 @@
 "use strict"
 const { Sequelize } = require("sequelize")
-const sequelize = require("../config/sequelize")
+const sequelize = require("../configs/sequelize")
 
 const db = {
-    User: require("./user"),
-    RefreshToken: require("./refresh-token"),
-    Category: require("./category"),
+    Author: require("./author"),
     Book: require("./book"),
-    BookLike: require("./book-like"),
+    Category: require("./category"),
+    Invoice: require("./invoice"),
+    InvoiceItem: require("./invoiceItem"),
+    RefreshToken: require("./refreshToken"),
+    User: require("./user"),
 }
 
 Object.keys(db).forEach((modelName) => {

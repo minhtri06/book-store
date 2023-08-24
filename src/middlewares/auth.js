@@ -1,39 +1,39 @@
 const passport = require("passport")
 const createError = require("http-errors")
-const roleConfig = require("../config/roles")
+
+const { roleRights } = require("../configs/roles")
 
 /**
  *
  * @param {string[]} requiredRights
+ * @param {object} req
+ * @param {function} next
+ * @returns {function}
  */
-const verifyCallback = (requiredRights, req, next) => async (err, user, info) => {
+const verifyCallBack = (requiredRights, req, next) => async (err, user, info) => {
     try {
         if (err || !user || info) {
-            throw createError.Unauthorized(info ? info.message : "Please authenticate")
+            throw createError.Unauthorized("Unauthorized")
         }
-        if (requiredRights.length) {
-            const userRights = roleConfig.roleRights.get(user.role)
-            const hasRequiredRights = requiredRights.every((right) =>
-                userRights.includes(right)
-            )
-            if (!hasRequiredRights && req.params.userId != user.id) {
-                throw createError.Forbidden("Forbidden")
-            }
+        const userRights = roleRights.get(user.role)
+        if (!requiredRights.every((right) => userRights.includes(right))) {
+            throw createError.Forbidden("Forbidden")
         }
+        req.user.rights = userRights
         next()
     } catch (error) {
         next(error)
     }
 }
 
-const auth =
-    (...requiredRights) =>
-    async (req, res, next) => {
+const auth = (...requiredRights) => {
+    return async (req, res, next) => {
         passport.authenticate(
             "jwt",
             { session: false },
-            verifyCallback(requiredRights, req, next)
+            verifyCallBack(requiredRights, req, next),
         )(req, res, next)
     }
+}
 
 module.exports = auth

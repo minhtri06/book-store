@@ -1,9 +1,9 @@
 const createError = require("http-errors")
-const cloudinary = require("cloudinary").v2
-const { BODY, QUERY, PARAMS } = require("../utils").commonConstants
+const { BODY, QUERY, PARAMS, FILE } = require("../configs/commonConstants").request
+const { deleteFile } = require("../utils").file
 
-const validate = (schema) => (req, res, next) => {
-    for (let prop of [BODY, QUERY, PARAMS]) {
+const validate = (schema) => async (req, res, next) => {
+    for (let prop of [BODY, QUERY, PARAMS, FILE]) {
         if (!schema[prop]) {
             continue
         }
@@ -12,7 +12,7 @@ const validate = (schema) => (req, res, next) => {
         })
         if (error) {
             if (req.file) {
-                cloudinary.uploader.destroy(req.file.filename)
+                await deleteFile(req.file.path)
             }
             next(new createError.BadRequest(`Request error (${prop}): ${error.message}`))
         } else {

@@ -1,7 +1,9 @@
 module.exports = {
-    userController: require("./user-controller"),
-    authController: require("./auth-controller"),
-    categoryController: require("./category-controller"),
-    bookController: require("./book-controller"),
-    meController: require("./me-controller"),
+    authController: require("./auth.controller"),
+    authorController: require("./author.controller"),
+    bookController: require("./book.controller"),
+    categoryController: require("./category.controller"),
+    invoiceController: require("./invoice.controller"),
+    meController: require("./me.controller"),
+    userController: require("./user.controller"),
 }
