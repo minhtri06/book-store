@@ -2,7 +2,7 @@
 
 ### About this project
 
-The aim of this project was to practice my skills in working with RESTful APIs and ORMs. It is based on another repository of mine [link github](https://github.com/minhtri06/express-rest-api-security-practice)
+The aim of this project was to practice my skills in working with RESTful APIs and ORMs. It is based on another [repository](https://github.com/minhtri06/express-rest-api-security-practice) of mine
 
 #### General functionalities
 
@@ -23,7 +23,7 @@ Admin:
 
 Sale manager:
 
--   Manages invoices
+-   Manage invoices
 
 User:
 
