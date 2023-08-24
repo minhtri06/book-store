@@ -13,7 +13,7 @@ The aim of this project was to practice my skills in working with RESTful APIs a
 -   Update profile
 -   Change avatar
 
-#### Role specific functionalities
+#### Role-specific functionalities
 
 Admin:
 
